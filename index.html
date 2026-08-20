@@ -1,0 +1,2515 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Aura | The Editorial Suite Setup</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,600;0,700;1,600&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Auth & Drive API Scripts -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary": "#544030",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#cfc5b2",
+                        "tertiary-fixed": "#fbddc7",
+                        "inverse-on-surface": "#f7f0e5",
+                        "on-secondary-fixed": "#2f1315",
+                        "glass-border": "rgba(255, 255, 255, 0.5)",
+                        "chart-accent": "#DEC1AC",
+                        "warm-bg": "#FFFBFC",
+                        "surface-container-high": "#efe7dd",
+                        "primary-container": "#705800",
+                        "primary-fixed": "#ffe08c",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#745b04",
+                        "secondary-container": "#fecbcb",
+                        "primary": "#544100",
+                        "secondary-fixed-dim": "#ecbabb",
+                        "on-primary-fixed-variant": "#584400",
+                        "inverse-surface": "#333029",
+                        "outline": "#7e7666",
+                        "on-surface-variant": "#4c4638",
+                        "surface": "#fff8f1",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#574333",
+                        "surface-variant": "#e9e1d7",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f4ede2",
+                        "on-surface": "#1e1b15",
+                        "error": "#ba1a1a",
+                        "background": "#fff8f1",
+                        "peach-glow": "#FCECD5",
+                        "on-primary-container": "#f2d073",
+                        "on-tertiary-container": "#ecceb9",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#dec1ac",
+                        "surface-dim": "#e0d9cf",
+                        "secondary": "#7b5455",
+                        "primary-fixed-dim": "#e4c368",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#ffdada",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#e4c368",
+                        "surface-container-low": "#faf3e8",
+                        "surface-bright": "#fff8f1",
+                        "on-secondary-container": "#7a5354",
+                        "on-primary-fixed": "#241a00",
+                        "on-tertiary-fixed": "#28180b",
+                        "rose-glow": "#FEC7C7",
+                        "tertiary-container": "#6d5746",
+                        "on-background": "#1e1b15",
+                        "on-secondary-fixed-variant": "#613d3e",
+                        "surface-container-highest": "#e9e1d7",
+                        "glass-fill": "rgba(255, 255, 255, 0.45)",
+                        "aura-gold": "#C5A059"
+                    },
+                    borderRadius: {
+                        DEFAULT: "1rem",
+                        lg: "2rem",
+                        xl: "3rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "stack-lg": "48px",
+                        "unit": "8px",
+                        "stack-md": "24px",
+                        "stack-sm": "12px",
+                        "gutter": "24px",
+                        "container-padding": "40px"
+                    },
+                    fontFamily: {
+                        "label-tiny": ["Inter"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "headline-sm": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"]
+                    }
+                }
+            }
+        };
+    </script>
+<style>
+        body {
+            background-color: #fffbfc;
+            background-image: 
+                radial-gradient(at 0% 0%, #fcecd5 0%, transparent 70%),
+                radial-gradient(at 100% 100%, #fec7c7 0%, transparent 70%),
+                radial-gradient(at 50% 50%, #fff9f5 0%, transparent 100%);
+            background-attachment: fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+        .liquid-glass {
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 15px 45px rgba(166, 123, 124, 0.05);
+        }
+        .editorial-input {
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            border-bottom: 1px solid rgba(126, 118, 102, 0.3);
+            border-radius: 0;
+            padding-left: 0;
+            padding-right: 0;
+            transition: all 0.3s ease;
+        }
+        .editorial-input:focus {
+            outline: none;
+            box-shadow: none;
+            border-bottom-color: #544100;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom checkbox style */
+        .toolkit-card.active {
+            background: rgba(197, 160, 89, 0.1);
+            border-color: rgba(197, 160, 89, 0.3);
+        }
+        .checkbox-container .check-icon {
+            display: none;
+        }
+        .toolkit-card.active .checkbox-container .check-icon {
+            display: block;
+        }
+        .toolkit-card.active .checkbox-container {
+            background-color: #C5A059;
+            border-color: #C5A059;
+            color: white;
+        }
+
+        .sidebar-transition {
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item-transition {
+            transition: padding 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+        }
+        .nav-icon-transition {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .label-fade {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .nav-item.active {
+            background: rgba(123, 84, 85, 0.1);
+            color: #7b5455;
+        }
+        
+        #sidebar.collapsed .nav-item {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        #sidebar.collapsed .nav-item .nav-icon-container {
+            transform: translateX(2px);
+        }
+        #sidebar.collapsed .group\/section {
+            margin-left: -0.5rem;
+        }
+        #sidebar.collapsed .section-header {
+            padding-left: 1.25rem;
+        }
+        
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+        .carousel-slide {
+            flex: 0 0 100%;
+            width: 100%;
+        }
+        .hide-scrollbar::-webkit-scrollbar,
+        .sidebar-scroll::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+        .hide-scrollbar,
+        .sidebar-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Right side main content scrollbar */
+        #main-content {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(123, 84, 85, 0.25) transparent;
+        }
+        #main-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        #main-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #main-content::-webkit-scrollbar-thumb {
+            background: rgba(123, 84, 85, 0.2);
+            border-radius: 9999px;
+        }
+        #main-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(123, 84, 85, 0.4);
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+        }
+
+        /* --- Inline Sync Status Badge (Per Rule 10) --- */
+        .sync-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            padding: 0.4rem 0.85rem;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.6);
+            color: #4c4638;
+            white-space: pre-line;
+            line-height: 1.35;
+            text-align: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+        }
+
+        .sync-status.active {
+            background-color: #fcecd5;
+            color: #705800;
+            border-color: #ffe08c;
+        }
+
+        .sync-status.error {
+            background-color: #fef2f2;
+            color: #ba1a1a;
+            border-color: #fecaca;
+            cursor: pointer;
+        }
+    </style>
+<style>
+        /* Refined alignment for collapsed state */
+        #sidebar.collapsed .nav-item {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            justify-content: center;
+        }
+        #sidebar.collapsed .nav-item .nav-icon-container {
+            transform: translateX(-4px);
+            margin-left: 0;
+        }
+        #sidebar.collapsed .section-header {
+            padding-left: 0.5rem;
+            justify-content: center;
+        }
+        #sidebar.collapsed .section-header .material-symbols-outlined:not(.sidebar-label) {
+            transform: translateX(-4px);
+        }
+        /* Smooth fluid transition for the liquid glass aesthetic */
+        .nav-icon-transition {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .sidebar-transition {
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+    </style><style>
+  /* Fix active state in collapsed mode to be a centered circle */
+  #sidebar.collapsed .nav-item.active {
+    background: rgba(123, 84, 85, 0.15);
+    border-radius: 9999px;
+    width: 40px;
+    height: 40px;
+    padding: 0 !important;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Ensure all nav items are centered when collapsed */
+  #sidebar.collapsed .nav-item {
+    width: 40px;
+    height: 40px;
+    margin: 4px auto;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  /* Center the hamburger button container */
+  #sidebar.collapsed .flex.items-center.justify-start.mb-6 {
+    justify-content: center !important;
+    margin-left: 0 !important;
+  }
+
+  /* Reset icon transforms that were causing asymmetry */
+  #sidebar.collapsed .nav-item .nav-icon-container,
+  #sidebar.collapsed .section-header .material-symbols-outlined:not(.sidebar-label) {
+    transform: none !important;
+    margin: 0 !important;
+  }
+
+  /* Ensure section headers are centered when collapsed */
+  #sidebar.collapsed .section-header {
+    justify-content: center !important;
+    padding: 8px 0 !important;
+  }
+</style></head>
+<body class="font-body-md text-on-background antialiased flex h-screen w-screen overflow-hidden" style="background-color: rgb(255, 251, 252); background-image: radial-gradient(at 0% 0%, rgb(252, 236, 213) 0%, transparent 70%), radial-gradient(at 100% 100%, rgb(254, 199, 199) 0%, transparent 70%), radial-gradient(rgb(255, 249, 245) 0%, transparent 100%); background-attachment: fixed; background-size: cover;">
+<!-- Left Side Navigation (100% Height, Frozen, Independent Scroll) -->
+<aside class="sidebar-transition h-screen w-60 bg-white/40 backdrop-blur-3xl border-r border-white/30 flex flex-col p-4 z-50 overflow-hidden flex-shrink-0" id="sidebar">
+<div class="flex items-center overflow-hidden justify-start mb-6 flex-shrink-0">
+<button class="p-2 hover:bg-black/5 rounded-full transition-colors flex-shrink-0" id="sidebar-toggle">
+<span class="material-symbols-outlined text-on-surface">menu</span>
+</button>
+<div class="sidebar-label label-fade flex flex-col justify-start ml-2" style="display: flex; opacity: 1; transform: translateX(0px);">
+<h1 class="font-headline-sm text-[15px] text-primary italic tracking-wider -mt-1 whitespace-nowrap" id="days-to-go-label">128 DAYS TO GO</h1>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto hide-scrollbar pb-8 flex flex-col justify-between" style="min-height: 0;">
+<div class="space-y-1">
+<!-- Overview -->
+<div class="group/section mb-2">
+<button class="section-header w-full flex items-center justify-between px-3 py-2 hover:bg-white/40 rounded-lg transition-all">
+<h4 class="sidebar-label label-fade font-label-caps text-[10px] text-on-surface-variant/50 uppercase justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Overview</h4>
+<span class="sidebar-label material-symbols-outlined text-sm text-on-surface-variant/30" style="opacity: 1; transform: translateX(0px); display: flex;">expand_more</span>
+</button>
+<div class="mt-1 space-y-1 pl-2 section-content">
+<a class="nav-item nav-item-transition flex items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">dashboard</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Dashboard</span>
+</a>
+<a class="nav-item nav-item-transition flex items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">notifications</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Notification</span>
+</a>
+<a class="nav-item nav-item-transition flex items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">calendar_month</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Calendar</span>
+</a>
+</div>
+</div>
+<!-- Budget & Vendors -->
+<div class="mb-4 group/section" id="nav-section-budget">
+<button class="section-header w-full flex items-center justify-between px-3 py-2 hover:bg-white/40 rounded-lg transition-all">
+<h4 class="sidebar-label label-fade font-label-caps text-[10px] text-on-surface-variant/50 uppercase justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Budget &amp; Vendors</h4>
+<span class="sidebar-label material-symbols-outlined text-sm text-on-surface-variant/30" style="opacity: 1; transform: translateX(0px); display: flex;">expand_more</span>
+</button>
+<div class="mt-1 space-y-1 pl-2 section-content">
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Vendor Selection" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">storefront</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Vendor Selection</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Venue Comparison" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">location_on</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Venue Comparison</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Wedding Budget" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">payments</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Wedding Budget</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Food &amp; Drinks" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">restaurant</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Food &amp; Drinks</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Photo &amp; Shot List" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">photo_camera</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Photo &amp; Shot List</span>
+</a>
+</div>
+</div>
+<!-- Guests -->
+<div class="mb-4 group/section" id="nav-section-guests">
+<button class="section-header w-full flex items-center justify-between px-3 py-2 hover:bg-white/40 rounded-lg transition-all">
+<h4 class="sidebar-label label-fade font-label-caps text-[10px] text-on-surface-variant/50 uppercase justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Guests</h4>
+<span class="sidebar-label material-symbols-outlined text-sm text-on-surface-variant/30" style="opacity: 1; transform: translateX(0px); display: flex;">expand_more</span>
+</button>
+<div class="mt-1 space-y-1 pl-2 section-content">
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Guest List" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">group</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Guest List</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Seating Arrangement" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">event_seat</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Seating Arrangement</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Wedding Party" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">celebration</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Wedding Party</span>
+</a>
+</div>
+</div>
+<!-- Planning -->
+<div class="mb-4 group/section" id="nav-section-planning">
+<button class="section-header w-full flex items-center justify-between px-3 py-2 hover:bg-white/40 rounded-lg transition-all">
+<h4 class="sidebar-label label-fade font-label-caps text-[10px] text-on-surface-variant/50 uppercase justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Planning</h4>
+<span class="sidebar-label material-symbols-outlined text-sm text-on-surface-variant/30" style="opacity: 1; transform: translateX(0px); display: flex;">expand_more</span>
+</button>
+<div class="mt-1 space-y-1 pl-2 section-content">
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Checklist" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">check_circle</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Checklist</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Itinerary" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">schedule</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Itinerary</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Moodboard" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">palette</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Moodboard</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Music" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">music_note</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Music</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Packing List" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">luggage</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Packing List</span>
+</a>
+</div>
+</div>
+<!-- Afterwards -->
+<div class="mb-4 group/section" id="nav-section-afterwards">
+<button class="section-header w-full flex items-center justify-between px-3 py-2 hover:bg-white/40 rounded-lg transition-all">
+<h4 class="sidebar-label label-fade font-label-caps text-[10px] text-on-surface-variant/50 uppercase justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Afterwards</h4>
+<span class="sidebar-label material-symbols-outlined text-sm text-on-surface-variant/30" style="opacity: 1; transform: translateX(0px); display: flex;">expand_more</span>
+</button>
+<div class="mt-1 space-y-1 pl-2 section-content">
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Honeymoon" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">flight_takeoff</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Honeymoon</span>
+</a>
+<a class="nav-item nav-item-transition items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group gap-2 justify-start flex" data-nav-id="Gifts &amp; Thanks" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">card_giftcard</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Gifts &amp; Thanks</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Settings (Pinned to bottom of left navigation menu) -->
+<div class="mt-auto pt-4 mb-2">
+<a class="nav-item nav-item-transition flex items-center h-9 px-3 rounded-full text-on-surface-variant hover:bg-white/40 group active gap-2 justify-start" href="#">
+<div class="nav-icon-container nav-icon-transition w-6 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">settings</span>
+</div>
+<span class="sidebar-label label-fade font-label-caps text-[10px] uppercase opacity-100 whitespace-nowrap justify-start" style="display: flex; opacity: 1; transform: translateX(0px);">Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- Right Side Main Content (Independent Vertical Scroll, Top to Backup Options) -->
+<main class="flex-1 h-screen overflow-y-auto overflow-x-hidden p-container-padding" id="main-content">
+<div class="max-w-6xl mx-auto pb-16">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start mb-16 gap-8">
+<div>
+<h2 class="font-display-lg text-6xl italic mt-2">The Settings</h2>
+<p class="font-body-lg text-on-surface-variant/70 mt-4 max-w-lg">Configure your bespoke planning experience</p>
+</div>
+<div class="flex items-center gap-3 flex-wrap">
+<div id="syncStatusIndicator" class="sync-status" style="display: none;"></div>
+<button class="flex items-center gap-2 px-6 py-3 text-white rounded-full transition-all font-label-caps text-[12px] uppercase shadow-lg bg-secondary hover:bg-secondary/90 shadow-secondary/10">
+<span class="material-symbols-outlined text-lg">play_circle</span>
+                    Watch Tutorial
+                </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter relative z-30">
+<!-- Left: Event Information -->
+<div class="lg:col-span-4 space-y-gutter relative z-40">
+<section class="liquid-glass rounded-xl p-10 relative z-40 overflow-visible">
+<h3 class="font-headline-sm text-2xl italic mb-10">Event Information</h3>
+<div class="space-y-12">
+<div class="group">
+<label class="font-label-caps text-[10px] text-on-surface-variant/60 block mb-2">WEDDING TYPE</label>
+<select class="editorial-input w-full bg-transparent text-xl font-headline-sm py-2 cursor-pointer focus:ring-0 placeholder:text-on-surface-variant/50" id="wedding-type" onchange="handleFieldChange('weddingType', this.value)">
+<option value="bg">Bride &amp; Groom</option>
+<option value="bb">2 Brides</option>
+<option value="gg">2 Grooms</option>
+<option value="pp">Partner 1 &amp; Partner 2</option>
+</select>
+</div>
+<div class="grid grid-cols-1 gap-12" id="dynamic-names">
+<div class="group">
+<label class="font-label-caps text-[10px] text-on-surface-variant/60 block mb-2 uppercase" id="label-name-1">Bride's Name</label>
+<input class="editorial-input w-full bg-transparent text-xl font-headline-sm focus:ring-0 placeholder:text-on-surface-variant/30" id="partner-1-input" placeholder="e.g. Arabella" type="text" oninput="handleFieldChange('partner1Name', this.value)">
+</div>
+<div class="group">
+<label class="font-label-caps text-[10px] text-on-surface-variant/60 block mb-2 uppercase" id="label-name-2">Groom's Name</label>
+<input class="editorial-input w-full bg-transparent text-xl font-headline-sm focus:ring-0 placeholder:text-on-surface-variant/30" id="partner-2-input" placeholder="e.g. Julian" type="text" oninput="handleFieldChange('partner2Name', this.value)">
+</div>
+</div>
+<div class="group relative z-50" id="wedding-date-group">
+<label class="font-label-caps text-[10px] text-on-surface-variant/60 block mb-2">WEDDING DATE</label>
+<div class="relative flex items-center">
+<input class="editorial-input w-full text-xl font-headline-sm focus:ring-0 bg-transparent cursor-pointer pr-8 select-none" id="wedding-date-input" placeholder="MMM DD, YYYY" type="text" value="Sep 24, 2025" readonly onclick="toggleCustomDatePicker(event)">
+<button type="button" onclick="toggleCustomDatePicker(event)" class="absolute right-0 text-primary/50 hover:text-primary transition-colors cursor-pointer flex items-center justify-center p-1">
+<span class="material-symbols-outlined text-xl" id="calendar-icon">calendar_month</span>
+</button>
+</div>
+
+<!-- Custom Liquid-Glass Calendar Popover (Supports Day, Month, and Year Views) -->
+<div id="custom-datepicker-popover" onclick="event.stopPropagation();" class="hidden absolute left-0 top-full mt-3 p-5 rounded-2xl liquid-glass border border-white/80 w-80 transition-all duration-200 opacity-0 scale-95 origin-top-left backdrop-blur-3xl" style="background: rgba(255, 250, 246, 0.97); box-shadow: 0 25px 50px rgba(123, 84, 85, 0.2); z-index: 9999;">
+<!-- Header Controls (Month/Year Switcher & Chevrons) -->
+<div id="picker-header-controls" class="flex justify-between items-center mb-4">
+</div>
+
+<!-- Day Names Header (hidden in Month/Year view) -->
+<div id="picker-day-names" class="grid grid-cols-7 gap-1 text-center font-label-caps text-[9px] uppercase text-on-surface-variant/60 font-semibold mb-2">
+<span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+</div>
+
+<!-- Dynamic Grid (Days / Months / Years) -->
+<div id="picker-calendar-grid" class="grid grid-cols-7 gap-1 text-center text-xs font-medium min-h-[190px]">
+</div>
+
+<!-- Footer Quick Actions -->
+<div class="mt-4 pt-3 border-t border-primary/10 flex justify-between items-center text-[11px] font-label-caps">
+<button type="button" onclick="selectTodayDate(); event.stopPropagation();" class="text-aura-gold hover:text-primary transition-colors font-semibold uppercase tracking-wider cursor-pointer">Today</button>
+<button type="button" onclick="closeCustomDatePicker(); event.stopPropagation();" class="text-on-surface-variant/60 hover:text-on-surface transition-colors uppercase tracking-wider cursor-pointer">Done</button>
+</div>
+</div>
+</div>
+<div class="group">
+<label class="font-label-caps text-[10px] text-on-surface-variant/60 block mb-2">PREFERRED CURRENCY</label>
+<input class="editorial-input w-full bg-transparent text-xl font-headline-sm focus:ring-0 placeholder:text-on-surface-variant/30" id="currency-input" placeholder="e.g. $ or €" type="text" oninput="handleFieldChange('currency', this.value)">
+</div>
+</div>
+</section>
+</div>
+<!-- Right: Feature Curation Carousel -->
+<div class="lg:col-span-8">
+<section class="liquid-glass rounded-xl p-8 h-full flex flex-col">
+<div class="flex justify-between items-center mb-8">
+<div class="flex flex-col items-start">
+<h3 class="font-headline-sm text-2xl italic">The Planning Toolkit</h3>
+<p class="font-body-md text-on-surface-variant/60 italic mt-1">Choose the areas you want to plan</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full border border-primary/20 hover:bg-white/40 transition-colors flex items-center justify-center" id="prev-slide">
+<span class="material-symbols-outlined text-primary">chevron_left</span>
+</button>
+<button class="p-2 rounded-full border border-primary/20 hover:bg-white/40 transition-colors flex items-center justify-center" id="next-slide">
+<span class="material-symbols-outlined text-primary">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Progress Dots -->
+<div class="flex justify-center gap-2 mb-10" id="carousel-dots">
+<div class="h-1 rounded-full dot active transition-all bg-aura-gold w-6"></div>
+<div class="h-1 rounded-full dot transition-all bg-primary/10 w-1"></div>
+<div class="h-1 rounded-full dot transition-all bg-primary/10 w-1"></div>
+<div class="h-1 rounded-full dot transition-all bg-primary/10 w-1"></div>
+</div>
+<div class="carousel-container flex-1">
+<div class="carousel-track" id="carousel-track" style="transform: translateX(0%);">
+<!-- Slide 1: Budget & Vendors -->
+<div class="carousel-slide px-1">
+<h4 class="font-label-caps text-[10px] text-primary/60 mb-6 uppercase tracking-widest">Budget &amp; Vendors</h4>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Vendor Selection">
+<span class="text-sm font-medium">Vendor Selection</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Venue Comparison">
+<span class="text-sm font-medium">Venue Comparison</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Wedding Budget">
+<span class="text-sm font-medium">Wedding Budget</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Food &amp; Drinks">
+<span class="text-sm font-medium">Food &amp; Drinks</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Photo &amp; Shot List">
+<span class="text-sm font-medium">Photo &amp; Shot List</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 2: Guest Management -->
+<div class="carousel-slide px-1">
+<h4 class="font-label-caps text-[10px] text-primary/60 mb-6 uppercase tracking-widest">Guest Management</h4>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Guest List">
+<span class="text-sm font-medium">Guest List</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Seating Arrangement">
+<span class="text-sm font-medium">Seating Arrangement</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Wedding Party">
+<span class="text-sm font-medium">Wedding Party</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 3: Wedding Planning -->
+<div class="carousel-slide px-1">
+<h4 class="font-label-caps text-[10px] text-primary/60 mb-6 uppercase tracking-widest">Wedding Planning</h4>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Checklist">
+<span class="text-sm font-medium">Checklist</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Itinerary">
+<span class="text-sm font-medium">Itinerary</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Moodboard">
+<span class="text-sm font-medium">Moodboard</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Music">
+<span class="text-sm font-medium">Music</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Packing List">
+<span class="text-sm font-medium">Packing List</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide 4: Post-Wedding -->
+<div class="carousel-slide px-1">
+<h4 class="font-label-caps text-[10px] text-primary/60 mb-6 uppercase tracking-widest">Post-Wedding</h4>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Honeymoon">
+<span class="text-sm font-medium">Honeymoon</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+<div class="toolkit-card p-4 rounded-lg bg-white/20 border border-white/40 hover:bg-white/40 transition-all flex justify-between items-center cursor-pointer active" data-id="Gifts &amp; Thanks">
+<span class="text-sm font-medium">Gifts &amp; Thanks</span>
+<div class="checkbox-container h-5 w-5 rounded-full border border-primary/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-sm check-icon">check</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-8 border-t border-white/20 flex justify-center">
+<span class="italic text-sm text-on-surface-variant/50">"Elegance is the only beauty that never fades." — Audrey Hepburn</span>
+</div>
+</section>
+</div>
+</div>
+
+<!-- Bottom Section: Backup Options (Adapted from budget.html with setting.html styling) -->
+<div class="mt-8 relative z-10">
+<section class="liquid-glass rounded-xl p-10 relative z-10">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+<div>
+<h3 class="font-headline-sm text-2xl italic text-on-surface">Backup Options</h3>
+<p class="font-body-md text-on-surface-variant/60 italic mt-1">Manage your cloud and device backups</p>
+</div>
+<button onclick="clearAllData()" class="flex items-center gap-2 px-5 py-2.5 rounded-full text-error border border-error/30 hover:bg-error/10 transition-all font-label-caps text-[11px] uppercase">
+<span class="material-symbols-outlined text-base">delete</span>
+Clear All Data
+</button>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Manual Backup Card -->
+<div class="p-6 rounded-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all flex flex-col justify-between gap-4">
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-primary font-headline-sm text-lg italic">
+<span class="material-symbols-outlined text-xl">download</span>
+Manual Backup
+</div>
+<p class="font-body-md text-sm text-on-surface-variant/70">Backup data on your device as a JSON export file</p>
+</div>
+<div class="flex gap-3 pt-2">
+<button onclick="exportData()" class="flex-1 py-2.5 px-4 rounded-full border border-primary/20 bg-white/40 hover:bg-white/70 transition-all text-on-surface font-label-caps text-[11px] uppercase tracking-wider text-center flex items-center justify-center gap-1.5 cursor-pointer">
+<span class="material-symbols-outlined text-sm">file_download</span>
+Export Data
+</button>
+<button onclick="triggerImport()" class="flex-1 py-2.5 px-4 rounded-full border border-primary/20 bg-white/40 hover:bg-white/70 transition-all text-on-surface font-label-caps text-[11px] uppercase tracking-wider text-center flex items-center justify-center gap-1.5 cursor-pointer">
+<span class="material-symbols-outlined text-sm">file_upload</span>
+Import Data
+</button>
+<input type="file" id="importFile" accept=".json" onchange="importData(event)" style="display:none;" />
+</div>
+<p class="italic text-xs text-on-surface-variant/50">No automatic sync across devices. Data is stored locally, and clearing browser cache deletes your local data.</p>
+</div>
+
+<!-- Automatic Backup Card -->
+<div class="p-6 rounded-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all flex flex-col justify-between gap-4">
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-secondary font-headline-sm text-lg italic">
+<span class="material-symbols-outlined text-xl">cloud_sync</span>
+Automatic Backup
+</div>
+<p class="font-body-md text-sm text-on-surface-variant/70">Backup data automatically to your Google Drive AppData folder</p>
+</div>
+<div class="pt-2">
+<button id="authBtnSetupCard" onclick="handleAuthClick()" class="flex items-center gap-2 px-6 py-2.5 text-white rounded-full transition-all font-label-caps text-[11px] uppercase shadow-lg bg-secondary hover:bg-secondary/90 shadow-secondary/10 cursor-pointer">
+<span class="material-symbols-outlined text-base">cloud</span>
+Connect to Google Drive
+</button>
+</div>
+<p class="italic text-xs text-on-surface-variant/50">Connect using the same account on other devices for automatic sync. Mobile/tablet sessions need to be reconnected after token expiry.</p>
+</div>
+</div>
+</section>
+</div>
+
+</div>
+</main>
+
+<script>
+        // =========================================================================
+        // SECTION 1: SETTING.HTML INTERACTIVITY & UI CONTROLLERS
+        // =========================================================================
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const labels = document.querySelectorAll('.sidebar-label');
+        let isCollapsed = false;
+
+        toggleBtn.addEventListener('click', () => {
+            isCollapsed = !isCollapsed;
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                sidebar.classList.remove('w-60');
+                sidebar.classList.add('w-20');
+                labels.forEach(l => {
+                    l.style.opacity = '0';
+                    l.style.transform = 'translateX(-10px)';
+                    setTimeout(() => { if (isCollapsed) l.style.display = 'none'; }, 300);
+                });
+            } else {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-60');
+                labels.forEach(l => {
+                    l.style.display = 'flex';
+                    l.offsetHeight;
+                    l.style.opacity = '1';
+                    l.style.transform = 'translateX(0)';
+                });
+            }
+        });
+
+        // Carousel Logic
+        const track = document.getElementById('carousel-track');
+        const nextBtn = document.getElementById('next-slide');
+        const prevBtn = document.getElementById('prev-slide');
+        const dots = document.querySelectorAll('#carousel-dots .dot');
+        let currentSlide = 0;
+        const totalSlides = 4;
+
+        function updateCarousel() {
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('bg-aura-gold', 'w-6');
+                    dot.classList.remove('bg-primary/10', 'w-1');
+                } else {
+                    dot.classList.remove('bg-aura-gold', 'w-6');
+                    dot.classList.add('bg-primary/10', 'w-1');
+                }
+            });
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        });
+
+        // Dynamic Nav and Interactivity Logic
+        const toolkitCards = document.querySelectorAll('.toolkit-card');
+        const navItems = document.querySelectorAll('.nav-item[data-nav-id]');
+
+        function updateNavigationVisibility() {
+            // Update individual items
+            toolkitCards.forEach(card => {
+                const id = card.getAttribute('data-id');
+                const isActive = card.classList.contains('active');
+                
+                const correspondingNav = document.querySelector(`.nav-item[data-nav-id="${id}"]`);
+                if (correspondingNav) {
+                    if (isActive) {
+                        correspondingNav.classList.remove('hidden');
+                        correspondingNav.classList.add('flex');
+                    } else {
+                        correspondingNav.classList.remove('flex');
+                        correspondingNav.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Update parent sections (hide if empty)
+            document.querySelectorAll('.group\\/section').forEach(section => {
+                const content = section.querySelector('.section-content');
+                if (content) {
+                    const hasVisibleChildren = Array.from(content.children).some(child => !child.classList.contains('hidden'));
+                    if (hasVisibleChildren) {
+                        section.classList.remove('hidden');
+                    } else if (section.id !== '') { // Don't hide non-dynamic sections like Overview
+                        const dynamicSections = ['nav-section-budget', 'nav-section-guests', 'nav-section-planning', 'nav-section-afterwards'];
+                        if (dynamicSections.includes(section.id)) {
+                            section.classList.add('hidden');
+                        }
+                    }
+                }
+            });
+        }
+
+        toolkitCards.forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active');
+                updateNavigationVisibility();
+
+                // Persist active toolkit changes to serverless store
+                const activeList = Array.from(document.querySelectorAll('.toolkit-card.active')).map(c => c.getAttribute('data-id'));
+                handleFieldChange('activeToolkits', activeList);
+            });
+        });
+
+        // Wedding Type Name Logic
+        const weddingType = document.getElementById('wedding-type');
+        const label1 = document.getElementById('label-name-1');
+        const label2 = document.getElementById('label-name-2');
+        weddingType.addEventListener('change', (e) => {
+            const val = e.target.value;
+            switch(val) {
+                case 'bg': label1.innerText = "Bride's Name"; label2.innerText = "Groom's Name"; break;
+                case 'bb': label1.innerText = "Bride 1 Name"; label2.innerText = "Bride 2 Name"; break;
+                case 'gg': label1.innerText = "Groom 1 Name"; label2.innerText = "Groom 2 Name"; break;
+                case 'pp': label1.innerText = "Partner 1 Name"; label2.innerText = "Partner 2 Name"; break;
+            }
+        });
+
+        // Collapsible sections
+        document.querySelectorAll('.group\\/section .section-header').forEach(btn => { 
+            btn.addEventListener('click', () => { 
+                if (isCollapsed) return;
+                const content = btn.nextElementSibling; 
+                const icon = btn.querySelector('.material-symbols-outlined'); 
+                if (content.classList.contains('hidden')) { 
+                    content.classList.remove('hidden'); 
+                    icon.innerText = 'expand_more'; 
+                } else { 
+                    content.classList.add('hidden'); 
+                    icon.innerText = 'chevron_right'; 
+                } 
+            }); 
+        });
+
+        // Initialize nav visibility on load
+        updateNavigationVisibility();
+
+        // =========================================================================
+        // CUSTOM LIQUID-GLASS DATE & YEAR PICKER CONTROLLER
+        // =========================================================================
+        const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const FULL_MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        let pickerViewMode = 'days'; // 'days' | 'months' | 'years'
+        let pickerCurrentYear = 2025;
+        let pickerCurrentMonth = 8; // 0-indexed (8 = September)
+        let pickerDecadeStart = 2020;
+        let pickerSelectedDate = new Date(2025, 8, 24);
+
+        function parseCustomDate(dateStr) {
+            if (!dateStr || typeof dateStr !== 'string') return null;
+            dateStr = dateStr.trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                const parts = dateStr.split('-').map(Number);
+                return new Date(parts[0], parts[1] - 1, parts[2]);
+            }
+            const match = dateStr.match(/^([a-zA-Z]{3,9})\s+(\d{1,2}),?\s*(\d{4})$/);
+            if (match) {
+                const mStr = match[1].toLowerCase().slice(0, 3);
+                const mIndex = MONTH_NAMES.findIndex(m => m.toLowerCase() === mStr);
+                if (mIndex !== -1) {
+                    const day = parseInt(match[2], 10);
+                    const year = parseInt(match[3], 10);
+                    return new Date(year, mIndex, day);
+                }
+            }
+            const d = new Date(dateStr);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        function formatDisplayDate(dateObj) {
+            if (!dateObj || isNaN(dateObj.getTime())) return '';
+            const m = MONTH_NAMES[dateObj.getMonth()];
+            const d = dateObj.getDate();
+            const y = dateObj.getFullYear();
+            return `${m} ${d}, ${y}`;
+        }
+
+        function renderDatePicker() {
+            const popover = document.getElementById('custom-datepicker-popover');
+            if (!popover) return;
+
+            const headerEl = document.getElementById('picker-header-controls');
+            const dayNamesEl = document.getElementById('picker-day-names');
+            const gridEl = document.getElementById('picker-calendar-grid');
+            if (!headerEl || !gridEl) return;
+
+            if (pickerViewMode === 'days') {
+                if (dayNamesEl) {
+                    dayNamesEl.classList.remove('hidden');
+                    dayNamesEl.classList.add('grid');
+                }
+                gridEl.className = 'grid grid-cols-7 gap-1 text-center text-xs font-medium min-h-[190px]';
+
+                headerEl.innerHTML = `
+                    <button type="button" onclick="changePickerMonth(-1); event.stopPropagation();" class="p-1.5 rounded-full border border-primary/20 hover:bg-white/60 transition-colors flex items-center justify-center text-primary cursor-pointer">
+                        <span class="material-symbols-outlined text-base">chevron_left</span>
+                    </button>
+                    <div class="flex items-center gap-1 font-headline-sm text-base italic text-primary font-bold">
+                        <button type="button" onclick="switchToMonthView(); event.stopPropagation();" class="hover:bg-primary/10 px-2 py-0.5 rounded-md transition-colors cursor-pointer">${FULL_MONTH_NAMES[pickerCurrentMonth]}</button>
+                        <button type="button" onclick="switchToYearView(); event.stopPropagation();" class="hover:bg-primary/10 px-2 py-0.5 rounded-md transition-colors cursor-pointer text-aura-gold underline decoration-aura-gold/40 underline-offset-2">${pickerCurrentYear}</button>
+                    </div>
+                    <button type="button" onclick="changePickerMonth(1); event.stopPropagation();" class="p-1.5 rounded-full border border-primary/20 hover:bg-white/60 transition-colors flex items-center justify-center text-primary cursor-pointer">
+                        <span class="material-symbols-outlined text-base">chevron_right</span>
+                    </button>
+                `;
+
+                renderDaysGrid(gridEl);
+
+            } else if (pickerViewMode === 'months') {
+                if (dayNamesEl) {
+                    dayNamesEl.classList.add('hidden');
+                    dayNamesEl.classList.remove('grid');
+                }
+                gridEl.className = 'grid grid-cols-3 gap-2 text-center text-xs font-medium py-2 min-h-[190px]';
+
+                headerEl.innerHTML = `
+                    <button type="button" onclick="changePickerYear(-1); event.stopPropagation();" class="p-1.5 rounded-full border border-primary/20 hover:bg-white/60 transition-colors flex items-center justify-center text-primary cursor-pointer">
+                        <span class="material-symbols-outlined text-base">chevron_left</span>
+                    </button>
+                    <div class="font-headline-sm text-base italic text-primary font-bold cursor-pointer hover:bg-primary/10 px-3 py-0.5 rounded-md" onclick="switchToYearView(); event.stopPropagation();">
+                        ${pickerCurrentYear}
+                    </div>
+                    <button type="button" onclick="changePickerYear(1); event.stopPropagation();" class="p-1.5 rounded-full border border-primary/20 hover:bg-white/60 transition-colors flex items-center justify-center text-primary cursor-pointer">
+                        <span class="material-symbols-outlined text-base">chevron_right</span>
+                    </button>
+                `;
+
+                renderMonthsGrid(gridEl);
+
+            } else if (pickerViewMode === 'years') {
+                if (dayNamesEl) {
+                    dayNamesEl.classList.add('hidden');
+                    dayNamesEl.classList.remove('grid');
+                }
+                gridEl.className = 'grid grid-cols-3 gap-2 text-center text-xs font-medium py-2 min-h-[190px]';
+
+                const decadeEnd = pickerDecadeStart + 11;
+                headerEl.innerHTML = `
+                    <button type="button" onclick="changePickerDecade(-1); event.stopPropagation();" class="p-1.5 rounded-full border border-primary/20 hover:bg-white/60 transition-colors flex items-center justify-center text-primary cursor-pointer">
+                        <span class="material-symbols-outlined text-base">chevron_left</span>
+                    </button>
+                    <div class="font-headline-sm text-sm italic text-primary font-bold">
+                        ${pickerDecadeStart} – ${decadeEnd}
+                    </div>
+                    <button type="button" onclick="changePickerDecade(1); event.stopPropagation();" class="p-1.5 rounded-full border border-primary/20 hover:bg-white/60 transition-colors flex items-center justify-center text-primary cursor-pointer">
+                        <span class="material-symbols-outlined text-base">chevron_right</span>
+                    </button>
+                `;
+
+                renderYearsGrid(gridEl);
+            }
+        }
+
+        function renderYearsGrid(gridEl) {
+            gridEl.innerHTML = '';
+            const decadeEnd = pickerDecadeStart + 11;
+
+            for (let y = pickerDecadeStart; y <= decadeEnd; y++) {
+                const yearBtn = document.createElement('button');
+                yearBtn.type = 'button';
+                const isSelected = pickerSelectedDate && pickerSelectedDate.getFullYear() === y;
+                const isCurrent = (new Date()).getFullYear() === y;
+
+                let btnClasses = 'py-2.5 px-1 rounded-xl text-xs font-headline-sm transition-all cursor-pointer flex items-center justify-center ';
+                if (isSelected) {
+                    btnClasses += 'bg-aura-gold text-white font-bold shadow-md scale-105';
+                } else if (isCurrent) {
+                    btnClasses += 'border border-aura-gold text-primary font-bold hover:bg-aura-gold/15';
+                } else {
+                    btnClasses += 'bg-white/30 text-on-surface hover:bg-aura-gold/20 hover:text-primary';
+                }
+
+                yearBtn.className = btnClasses;
+                yearBtn.innerText = y;
+                yearBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    pickerCurrentYear = y;
+                    pickerViewMode = 'days';
+                    renderDatePicker();
+                };
+                gridEl.appendChild(yearBtn);
+            }
+        }
+
+        function renderMonthsGrid(gridEl) {
+            gridEl.innerHTML = '';
+            for (let m = 0; m < 12; m++) {
+                const monthBtn = document.createElement('button');
+                monthBtn.type = 'button';
+                const isSelected = pickerSelectedDate && pickerSelectedDate.getFullYear() === pickerCurrentYear && pickerSelectedDate.getMonth() === m;
+                const isCurrentMonth = (new Date()).getFullYear() === pickerCurrentYear && (new Date()).getMonth() === m;
+
+                let btnClasses = 'py-2.5 px-1 rounded-xl text-xs font-headline-sm transition-all cursor-pointer flex items-center justify-center ';
+                if (isSelected) {
+                    btnClasses += 'bg-aura-gold text-white font-bold shadow-md scale-105';
+                } else if (isCurrentMonth) {
+                    btnClasses += 'border border-aura-gold text-primary font-bold hover:bg-aura-gold/15';
+                } else {
+                    btnClasses += 'bg-white/30 text-on-surface hover:bg-aura-gold/20 hover:text-primary';
+                }
+
+                monthBtn.className = btnClasses;
+                monthBtn.innerText = MONTH_NAMES[m];
+                monthBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    pickerCurrentMonth = m;
+                    pickerViewMode = 'days';
+                    renderDatePicker();
+                };
+                gridEl.appendChild(monthBtn);
+            }
+        }
+
+        function renderDaysGrid(gridEl) {
+            gridEl.innerHTML = '';
+            const firstDayIndex = new Date(pickerCurrentYear, pickerCurrentMonth, 1).getDay();
+            const daysInMonth = new Date(pickerCurrentYear, pickerCurrentMonth + 1, 0).getDate();
+            const daysInPrevMonth = new Date(pickerCurrentYear, pickerCurrentMonth, 0).getDate();
+
+            const today = new Date();
+            const isTodayYearMonth = today.getFullYear() === pickerCurrentYear && today.getMonth() === pickerCurrentMonth;
+            const isSelectedYearMonth = pickerSelectedDate && pickerSelectedDate.getFullYear() === pickerCurrentYear && pickerSelectedDate.getMonth() === pickerCurrentMonth;
+
+            // Previous month overflow days
+            for (let i = firstDayIndex - 1; i >= 0; i--) {
+                const d = daysInPrevMonth - i;
+                const prevM = pickerCurrentMonth === 0 ? 11 : pickerCurrentMonth - 1;
+                const prevY = pickerCurrentMonth === 0 ? pickerCurrentYear - 1 : pickerCurrentYear;
+                const dayBtn = document.createElement('button');
+                dayBtn.type = 'button';
+                dayBtn.className = 'h-8 w-8 mx-auto flex items-center justify-center rounded-full text-on-surface-variant/30 text-[11px] cursor-pointer hover:bg-black/5 transition-all';
+                dayBtn.innerText = d;
+                dayBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    selectCalendarDay(d, prevY, prevM);
+                };
+                gridEl.appendChild(dayBtn);
+            }
+
+            // Current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayBtn = document.createElement('button');
+                dayBtn.type = 'button';
+                const isSelected = isSelectedYearMonth && pickerSelectedDate.getDate() === day;
+                const isToday = isTodayYearMonth && today.getDate() === day;
+
+                let btnClasses = 'h-8 w-8 mx-auto flex items-center justify-center rounded-full text-[11px] font-medium transition-all cursor-pointer ';
+                if (isSelected) {
+                    btnClasses += 'bg-aura-gold text-white shadow-md font-bold scale-105';
+                } else if (isToday) {
+                    btnClasses += 'border border-aura-gold text-primary font-bold hover:bg-aura-gold/15';
+                } else {
+                    btnClasses += 'text-on-surface hover:bg-aura-gold/15 hover:text-primary';
+                }
+
+                dayBtn.className = btnClasses;
+                dayBtn.innerText = day;
+                dayBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    selectCalendarDay(day, pickerCurrentYear, pickerCurrentMonth);
+                };
+                gridEl.appendChild(dayBtn);
+            }
+
+            // Next month overflow days
+            const totalRendered = firstDayIndex + daysInMonth;
+            const remaining = totalRendered > 35 ? (42 - totalRendered) : (35 - totalRendered);
+            for (let day = 1; day <= remaining; day++) {
+                const nextM = pickerCurrentMonth === 11 ? 0 : pickerCurrentMonth + 1;
+                const nextY = pickerCurrentMonth === 11 ? pickerCurrentYear + 1 : pickerCurrentYear;
+                const dayBtn = document.createElement('button');
+                dayBtn.type = 'button';
+                dayBtn.className = 'h-8 w-8 mx-auto flex items-center justify-center rounded-full text-on-surface-variant/30 text-[11px] cursor-pointer hover:bg-black/5 transition-all';
+                dayBtn.innerText = day;
+                dayBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    selectCalendarDay(day, nextY, nextM);
+                };
+                gridEl.appendChild(dayBtn);
+            }
+        }
+
+        function switchToYearView() {
+            pickerViewMode = 'years';
+            pickerDecadeStart = Math.floor(pickerCurrentYear / 12) * 12;
+            renderDatePicker();
+        }
+
+        function switchToMonthView() {
+            pickerViewMode = 'months';
+            renderDatePicker();
+        }
+
+        function changePickerYear(delta) {
+            pickerCurrentYear += delta;
+            renderDatePicker();
+        }
+
+        function changePickerDecade(delta) {
+            pickerDecadeStart += delta * 12;
+            renderDatePicker();
+        }
+
+        function changePickerMonth(delta) {
+            pickerCurrentMonth += delta;
+            if (pickerCurrentMonth > 11) {
+                pickerCurrentMonth = 0;
+                pickerCurrentYear++;
+            } else if (pickerCurrentMonth < 0) {
+                pickerCurrentMonth = 11;
+                pickerCurrentYear--;
+            }
+            renderDatePicker();
+        }
+
+        function selectCalendarDay(day, year, month) {
+            pickerSelectedDate = new Date(year, month, day);
+            pickerCurrentYear = year;
+            pickerCurrentMonth = month;
+
+            const formatted = formatDisplayDate(pickerSelectedDate);
+            const dateInput = document.getElementById('wedding-date-input');
+            if (dateInput) {
+                dateInput.value = formatted;
+            }
+
+            renderDatePicker();
+            handleFieldChange('weddingDate', formatted);
+            closeCustomDatePicker();
+        }
+
+        function selectTodayDate() {
+            const today = new Date();
+            selectCalendarDay(today.getDate(), today.getFullYear(), today.getMonth());
+        }
+
+        function toggleCustomDatePicker(e) {
+            if (e) e.stopPropagation();
+            const popover = document.getElementById('custom-datepicker-popover');
+            if (!popover) return;
+            if (popover.classList.contains('hidden')) {
+                openCustomDatePicker();
+            } else {
+                closeCustomDatePicker();
+            }
+        }
+
+        function openCustomDatePicker() {
+            const popover = document.getElementById('custom-datepicker-popover');
+            if (!popover) return;
+
+            const dateInput = document.getElementById('wedding-date-input');
+            const parsed = parseCustomDate(dateInput ? dateInput.value : '');
+            if (parsed) {
+                pickerSelectedDate = parsed;
+                pickerCurrentYear = parsed.getFullYear();
+                pickerCurrentMonth = parsed.getMonth();
+            } else {
+                const now = new Date();
+                pickerCurrentYear = now.getFullYear();
+                pickerCurrentMonth = now.getMonth();
+            }
+
+            pickerViewMode = 'days';
+            renderDatePicker();
+
+            popover.classList.remove('hidden');
+            popover.style.display = 'block';
+            popover.style.zIndex = '9999';
+            requestAnimationFrame(() => {
+                popover.classList.remove('opacity-0', 'scale-95');
+                popover.classList.add('opacity-100', 'scale-100');
+            });
+        }
+
+        function closeCustomDatePicker() {
+            const popover = document.getElementById('custom-datepicker-popover');
+            if (!popover || popover.classList.contains('hidden')) return;
+
+            popover.classList.remove('opacity-100', 'scale-100');
+            popover.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                popover.classList.add('hidden');
+                popover.style.display = 'none';
+                pickerViewMode = 'days';
+            }, 150);
+        }
+
+        document.addEventListener('click', (e) => {
+            const group = document.getElementById('wedding-date-group');
+            if (group && !group.contains(e.target)) {
+                closeCustomDatePicker();
+            }
+        });
+
+        // Dynamic Days To Go Countdown
+        function updateDaysToGoCountdown(dateStr) {
+            const labelEl = document.getElementById('days-to-go-label');
+            if (!labelEl) return;
+
+            if (!dateStr || typeof dateStr !== 'string' || !dateStr.trim()) {
+                labelEl.innerText = "Wedding Planner";
+                return;
+            }
+
+            const parsed = parseCustomDate(dateStr);
+            if (!parsed) {
+                labelEl.innerText = "Wedding Planner";
+                return;
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const target = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(), 0, 0, 0, 0);
+            const diffTime = target.getTime() - today.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays > 0) {
+                labelEl.innerText = `${diffDays} DAYS TO GO`;
+            } else if (diffDays === 0) {
+                labelEl.innerText = "TODAY IS THE DAY! ✨";
+            } else {
+                labelEl.innerText = "Happily Married!";
+            }
+        }
+
+        // =========================================================================
+        // SECTION 2: SERVERLESS DATA PERSISTENCE & GOOGLE DRIVE CLOUD SYNC ENGINE
+        // =========================================================================
+        const APP_NAME = 'imagetracker';
+        const DB_NAME = `${APP_NAME}_db`;
+        const DB_VERSION = 1;
+        const RECORDS_STORE = 'records';
+
+        const MAIN_BACKUP_FILENAME = `${APP_NAME}_backup.gz`;
+        const DELETED_IMAGES_FILENAME = `${APP_NAME}_deleted_images.gz`;
+        const IMAGE_FILE_PREFIX = 'img_';
+        const EXPORT_FILENAME = `${APP_NAME}_export.json`;
+        const GZ_EXT = '.gz';
+
+        const LS_KEY_HAS_LINKED = `${APP_NAME}_has_linked_google`;
+        const LS_KEY_ACCESS_TOKEN = `${APP_NAME}_google_access_token`;
+        const LS_KEY_TOKEN_EXPIRY = `${APP_NAME}_google_token_expiry`;
+        const LS_KEY_DELETED_IMAGES = `${APP_NAME}_local_deleted_images`;
+
+        let dbInstance = null;
+        let databaseArray = [];
+
+        let mainBackupFileId = null;
+        let deletedImagesFileId = null;
+        let cloudImageFilesMap = new Map();
+        let localImageUploadTracker = new Map();
+        let deletedImagesMap = new Map();
+
+        function loadLocalDeletedImages() {
+            try {
+                const raw = localStorage.getItem(LS_KEY_DELETED_IMAGES);
+                if (raw) {
+                    const entries = JSON.parse(raw);
+                    deletedImagesMap = new Map(entries);
+                }
+            } catch (e) {
+                console.error("Failed to load local deleted images:", e);
+            }
+        }
+
+        function saveLocalDeletedImages() {
+            try {
+                localStorage.setItem(LS_KEY_DELETED_IMAGES, JSON.stringify(Array.from(deletedImagesMap.entries())));
+            } catch (e) {
+                console.error("Failed to save local deleted images:", e);
+            }
+        }
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                if (dbInstance) return resolve(dbInstance);
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(RECORDS_STORE)) {
+                        db.createObjectStore(RECORDS_STORE, { keyPath: 'id' });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    dbInstance = event.target.result;
+                    resolve(dbInstance);
+                };
+
+                request.onerror = (event) => {
+                    if (event.target.error && event.target.error.name === 'VersionError') {
+                        const retryReq = indexedDB.open(DB_NAME);
+                        retryReq.onsuccess = (e) => {
+                            dbInstance = e.target.result;
+                            resolve(dbInstance);
+                        };
+                        retryReq.onerror = (e) => reject(e.target.error);
+                    } else {
+                        reject(event.target.error);
+                    }
+                };
+            });
+        }
+
+        async function loadLocalData() {
+            try {
+                const db = await openDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(RECORDS_STORE, 'readonly');
+                    const store = tx.objectStore(RECORDS_STORE);
+                    const req = store.getAll();
+                    req.onsuccess = () => {
+                        databaseArray = req.result || [];
+                        resolve(databaseArray);
+                    };
+                    req.onerror = () => reject(req.error);
+                });
+            } catch (err) {
+                console.error("IndexedDB read failure:", err);
+                databaseArray = [];
+                return [];
+            }
+        }
+
+        async function saveLocalData(data = databaseArray) {
+            try {
+                const db = await openDB();
+                const tx = db.transaction(RECORDS_STORE, 'readwrite');
+                const store = tx.objectStore(RECORDS_STORE);
+                store.clear();
+                data.forEach(r => store.put(r));
+                return new Promise((resolve, reject) => {
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            } catch (err) {
+                console.error("IndexedDB write failure:", err);
+            }
+        }
+
+        function isImageRecord(record) {
+            if (!record) return false;
+            if (record.table === 'images' || record.table === 'photos' || record.table === 'media' || record.table === 'attachments') {
+                return true;
+            }
+            if (record.data && (record.data.imageData || record.data.dataUrl || record.data.image || record.data.base64 || record.data.fileData)) {
+                return true;
+            }
+            return false;
+        }
+
+        function getImageFilename(recordId) {
+            return `${IMAGE_FILE_PREFIX}${encodeURIComponent(recordId)}${GZ_EXT}`;
+        }
+
+        function getRecordIdFromImageFilename(filename) {
+            if (!filename || !filename.startsWith(IMAGE_FILE_PREFIX) || !filename.endsWith(GZ_EXT)) return null;
+            const raw = filename.slice(IMAGE_FILE_PREFIX.length, -GZ_EXT.length);
+            try {
+                return decodeURIComponent(raw);
+            } catch (e) {
+                return raw;
+            }
+        }
+
+        async function compressString(str) {
+            const blob = new Blob([str], { type: 'application/json' });
+            const compressedStream = blob.stream().pipeThrough(new CompressionStream('gzip'));
+            return await new Response(compressedStream).blob();
+        }
+
+        async function decompressBlob(blob) {
+            const ds = new DecompressionStream('gzip');
+            const decompressedStream = blob.stream().pipeThrough(ds);
+            return await new Response(decompressedStream).text();
+        }
+
+        function getFieldTimestamp(record, key) {
+            if (!record) return 0;
+            if (record.updatedKeys && typeof record.updatedKeys[key] === 'number') {
+                return record.updatedKeys[key];
+            }
+            return typeof record.updatedAt === 'number' ? record.updatedAt : 0;
+        }
+
+        function mergeRecords(localItem, cloudItem) {
+            if (!localItem) return cloudItem;
+            if (!cloudItem) return localItem;
+
+            const localKeys = localItem.data ? Object.keys(localItem.data) : [];
+            const cloudKeys = cloudItem.data ? Object.keys(cloudItem.data) : [];
+            const allDataKeys = new Set([...localKeys, ...cloudKeys]);
+
+            const mergedData = {};
+            const mergedUpdatedKeys = {};
+
+            allDataKeys.forEach(k => {
+                const localTS = getFieldTimestamp(localItem, k);
+                const cloudTS = getFieldTimestamp(cloudItem, k);
+                if (localTS >= cloudTS) {
+                    if (localItem.data && k in localItem.data) mergedData[k] = localItem.data[k];
+                    else if (cloudItem.data && k in cloudItem.data) mergedData[k] = cloudItem.data[k];
+                    mergedUpdatedKeys[k] = localTS;
+                } else {
+                    if (cloudItem.data && k in cloudItem.data) mergedData[k] = cloudItem.data[k];
+                    else if (localItem.data && k in localItem.data) mergedData[k] = localItem.data[k];
+                    mergedUpdatedKeys[k] = cloudTS;
+                }
+            });
+
+            const localDeletedTS = (localItem.updatedKeys && typeof localItem.updatedKeys.deleted === 'number')
+                ? localItem.updatedKeys.deleted
+                : (localItem.deleted ? (localItem.updatedAt || 0) : 0);
+            const cloudDeletedTS = (cloudItem.updatedKeys && typeof cloudItem.updatedKeys.deleted === 'number')
+                ? cloudItem.updatedKeys.deleted
+                : (cloudItem.deleted ? (cloudItem.updatedAt || 0) : 0);
+
+            let isDeleted = false;
+            let deletedTS = 0;
+            if (localItem.deleted || cloudItem.deleted) {
+                if (localDeletedTS >= cloudDeletedTS) {
+                    isDeleted = !!localItem.deleted;
+                    deletedTS = localDeletedTS;
+                } else {
+                    isDeleted = !!cloudItem.deleted;
+                    deletedTS = cloudDeletedTS;
+                }
+                mergedUpdatedKeys.deleted = deletedTS;
+            }
+
+            const tsValues = Object.values(mergedUpdatedKeys);
+            const maxTS = tsValues.length > 0 ? Math.max(...tsValues) : 0;
+            const mergedUpdatedAt = Math.max(localItem.updatedAt || 0, cloudItem.updatedAt || 0, maxTS);
+
+            return {
+                id: localItem.id || cloudItem.id,
+                table: localItem.table || cloudItem.table,
+                updatedAt: mergedUpdatedAt,
+                deleted: isDeleted,
+                data: mergedData,
+                updatedKeys: mergedUpdatedKeys
+            };
+        }
+
+        function isLocalNewerInMerge(localItem, cloudItem) {
+            if (!cloudItem) return true;
+            if (!localItem) return false;
+            if ((localItem.updatedAt || 0) > (cloudItem.updatedAt || 0)) return true;
+
+            const localDelTS = (localItem.updatedKeys && typeof localItem.updatedKeys.deleted === 'number')
+                ? localItem.updatedKeys.deleted
+                : (localItem.deleted ? (localItem.updatedAt || 0) : 0);
+            const cloudDelTS = (cloudItem.updatedKeys && typeof cloudItem.updatedKeys.deleted === 'number')
+                ? cloudItem.updatedKeys.deleted
+                : (cloudItem.deleted ? (cloudItem.updatedAt || 0) : 0);
+            if (localDelTS > cloudDelTS) return true;
+
+            const allKeys = new Set([...Object.keys(localItem.data || {}), ...Object.keys(cloudItem.data || {})]);
+            for (const k of allKeys) {
+                const lTS = getFieldTimestamp(localItem, k);
+                const cTS = getFieldTimestamp(cloudItem, k);
+                if (lTS > cTS) return true;
+            }
+            if (JSON.stringify(localItem.data || {}) !== JSON.stringify(cloudItem.data || {}) && (localItem.updatedAt || 0) >= (cloudItem.updatedAt || 0)) {
+                return true;
+            }
+            return false;
+        }
+
+        let lastSyncedTimestamp = null;
+        let syncTimerInterval = null;
+
+        function updateSyncStatusDisplay() {
+            if (!lastSyncedTimestamp) return;
+            const diffMin = Math.floor((Date.now() - lastSyncedTimestamp) / 60000);
+            if (diffMin < 1) {
+                setSyncStatus("✅ Synced Just Now", "active");
+            } else {
+                setSyncStatus(`☁️ Last synced ${diffMin} min ago`, "active");
+            }
+        }
+
+        function startRelativeSyncTimer() {
+            if (syncTimerInterval) clearInterval(syncTimerInterval);
+            syncTimerInterval = setInterval(updateSyncStatusDisplay, 60000);
+        }
+
+        // =========================================================================
+        // GOOGLE DRIVE CLOUD SYNC ENGINE
+        // =========================================================================
+        const CLIENT_ID = '305632493984-9q07n0i677ku1btdds1scke8pam5ag3s.apps.googleusercontent.com';
+        const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
+
+        let tokenClient;
+        let gapiInited = false;
+        let gisimInited = false;
+        let accessToken = null;
+        let silentRefreshTimeout = null;
+        let isRefreshingToken = false;
+        let needsManualReconnect = false;
+
+        let syncDebounceTimeout = null;
+        let isSyncingInProgress = false;
+        let hasPendingSyncRequest = false;
+        let hasUnsavedChanges = false;
+
+        function setSyncStatus(text, type = '') {
+            const el = document.getElementById('syncStatusIndicator');
+            if (el) {
+                if (!text) {
+                    el.style.display = 'none';
+                } else {
+                    el.style.display = 'inline-flex';
+                    el.innerText = text;
+                    el.className = 'sync-status ' + type;
+
+                    if (type !== 'error') {
+                        el.style.cursor = 'default';
+                        el.onclick = null;
+                    } else {
+                        el.style.cursor = "pointer";
+                        el.onclick = () => {
+                            if (needsManualReconnect) {
+                                setSyncStatus("Connecting...", "active");
+                                tokenClient.requestAccessToken({ prompt: '' });
+                            } else {
+                                setSyncStatus("Syncing...", "active");
+                                pullAndMergeCloudData();
+                            }
+                        };
+                    }
+                }
+            }
+        }
+
+        function gapiLoaded() {
+            gapi.load('client', async () => {
+                await gapi.client.init({ discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'] });
+                gapiInited = true;
+                evaluateRoutingSession();
+            });
+        }
+
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: async (resp) => {
+                    isRefreshingToken = false;
+                    if (silentRefreshTimeout) {
+                        clearTimeout(silentRefreshTimeout);
+                        silentRefreshTimeout = null;
+                    }
+
+                    if (resp.error !== undefined) {
+                        needsManualReconnect = true;
+                        triggerReconnectState();
+                        return;
+                    }
+
+                    needsManualReconnect = false;
+                    accessToken = resp.access_token;
+                    gapi.client.setToken({ access_token: accessToken });
+
+                    localStorage.setItem(LS_KEY_ACCESS_TOKEN, accessToken);
+                    localStorage.setItem(LS_KEY_TOKEN_EXPIRY, (Date.now() + (resp.expires_in * 1000)).toString());
+                    localStorage.setItem(LS_KEY_HAS_LINKED, 'true');
+
+                    updateAuthUI(true);
+                    setSyncStatus("Cloud Synced ✅", "active");
+
+                    await pullAndMergeCloudData();
+                },
+            });
+            gisimInited = true;
+            evaluateRoutingSession();
+        }
+        window.addEventListener('load', () => { gapiLoaded(); gisLoaded(); });
+
+        function evaluateRoutingSession() {
+            if (!gapiInited || !gisimInited) return;
+
+            if (localStorage.getItem(LS_KEY_HAS_LINKED) === 'true') {
+                const cachedToken = localStorage.getItem(LS_KEY_ACCESS_TOKEN);
+                const expiry = parseInt(localStorage.getItem(LS_KEY_TOKEN_EXPIRY) || '0');
+
+                if (cachedToken && Date.now() < expiry) {
+                    accessToken = cachedToken;
+                    gapi.client.setToken({ access_token: accessToken });
+                    updateAuthUI(true);
+                    setSyncStatus("Cloud Synced ✅", "active");
+                    pullAndMergeCloudData();
+                } else {
+                    if (isRefreshingToken) return;
+
+                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+                    updateAuthUI(true);
+
+                    if (isMobile) {
+                        needsManualReconnect = true;
+                        triggerReconnectState();
+                    } else {
+                        isRefreshingToken = true;
+                        setSyncStatus("Reconnecting...", "active");
+
+                        silentRefreshTimeout = setTimeout(() => {
+                            console.warn("Silent refresh timed out. Forcing manual reconnect button.");
+                            isRefreshingToken = false;
+                            needsManualReconnect = true;
+                            triggerReconnectState();
+                        }, 4000);
+
+                        tokenClient.requestAccessToken({ prompt: 'none' });
+                    }
+                }
+            } else {
+                updateAuthUI(false);
+            }
+        }
+
+        function triggerReconnectState() {
+            setSyncStatus("Session Expired - Tap to Reconnect 🔄", "error");
+        }
+
+        function updateAuthUI(isConnected) {
+            const authBtnSetup = document.getElementById('authBtnSetupCard');
+            if (authBtnSetup) {
+                authBtnSetup.disabled = false;
+                if (isConnected) {
+                    authBtnSetup.innerHTML = '<span class="material-symbols-outlined text-base">cloud_off</span> Disconnect Drive';
+                    authBtnSetup.className = 'flex items-center gap-2 px-6 py-2.5 text-error rounded-full transition-all font-label-caps text-[11px] uppercase shadow-lg bg-rose-100 hover:bg-rose-200 border border-rose-200 cursor-pointer';
+                } else {
+                    authBtnSetup.innerHTML = '<span class="material-symbols-outlined text-base">cloud</span> Connect to Google Drive';
+                    authBtnSetup.className = 'flex items-center gap-2 px-6 py-2.5 text-white rounded-full transition-all font-label-caps text-[11px] uppercase shadow-lg bg-secondary hover:bg-secondary/90 shadow-secondary/10 cursor-pointer';
+                    setSyncStatus("", "");
+                }
+            }
+        }
+
+        function handleAuthClick() {
+            if (localStorage.getItem(LS_KEY_HAS_LINKED) === 'true') {
+                accessToken = null;
+                isRefreshingToken = false;
+                needsManualReconnect = false;
+                mainBackupFileId = null;
+                deletedImagesFileId = null;
+                cloudImageFilesMap.clear();
+                localImageUploadTracker.clear();
+                deletedImagesMap.clear();
+                localStorage.removeItem(LS_KEY_DELETED_IMAGES);
+
+                localStorage.setItem(LS_KEY_HAS_LINKED, 'false');
+                localStorage.removeItem(LS_KEY_ACCESS_TOKEN);
+                localStorage.removeItem(LS_KEY_TOKEN_EXPIRY);
+
+                updateAuthUI(false);
+                setSyncStatus("", "");
+            } else {
+                if (!gapiInited || !gisimInited) return alert("System connecting to Google services. Please retry in a moment.");
+                setSyncStatus("Connecting...", "active");
+                tokenClient.requestAccessToken({ prompt: 'select_account consent' });
+            }
+        }
+
+        async function pullAndMergeCloudData() {
+            if (!accessToken) return false;
+            try {
+                setSyncStatus("Checking Cloud...", "active");
+                const listResponse = await gapi.client.drive.files.list({
+                    spaces: 'appDataFolder',
+                    q: 'trashed = false',
+                    fields: 'files(id, name, modifiedTime)',
+                    pageSize: 1000
+                });
+
+                const allCloudFiles = listResponse.result.files || [];
+
+                const mainFile = allCloudFiles.find(f => f.name === MAIN_BACKUP_FILENAME);
+                mainBackupFileId = mainFile ? mainFile.id : null;
+
+                const deletedFile = allCloudFiles.find(f => f.name === DELETED_IMAGES_FILENAME);
+                deletedImagesFileId = deletedFile ? deletedFile.id : null;
+
+                const cloudImageFiles = allCloudFiles.filter(f => f.name.startsWith(IMAGE_FILE_PREFIX) && f.name.endsWith(GZ_EXT));
+                cloudImageFilesMap = new Map();
+                cloudImageFiles.forEach(f => {
+                    const recId = getRecordIdFromImageFilename(f.name);
+                    if (recId) cloudImageFilesMap.set(recId, f);
+                });
+
+                if (deletedImagesFileId) {
+                    try {
+                        const delDownloadResp = await fetch(`https://www.googleapis.com/drive/v3/files/${deletedImagesFileId}?alt=media`, {
+                            headers: { 'Authorization': `Bearer ${accessToken}` }
+                        });
+                        if (delDownloadResp.ok) {
+                            const blob = await delDownloadResp.blob();
+                            const jsonText = await decompressBlob(blob);
+                            const delPayload = JSON.parse(jsonText);
+                            const remoteDeletedList = delPayload.deletedImages || (Array.isArray(delPayload) ? delPayload : []);
+                            remoteDeletedList.forEach(item => {
+                                if (item && item.id) {
+                                    const rTS = typeof item.deletedAt === 'number' ? item.deletedAt : (item.updatedAt || 0);
+                                    const lTS = deletedImagesMap.get(item.id) || 0;
+                                    if (rTS > lTS || !deletedImagesMap.has(item.id)) {
+                                        deletedImagesMap.set(item.id, rTS);
+                                    }
+                                }
+                            });
+                            saveLocalDeletedImages();
+                        }
+                    } catch (delFetchErr) {
+                        console.warn("Could not download deleted images file:", delFetchErr);
+                    }
+                }
+
+                if (deletedImagesMap.size > 0) {
+                    for (const [delId, delTS] of deletedImagesMap.entries()) {
+                        if (cloudImageFilesMap.has(delId)) {
+                            const fileObj = cloudImageFilesMap.get(delId);
+                            try {
+                                await gapi.client.drive.files.delete({ fileId: fileObj.id });
+                            } catch (delErr) {
+                                console.warn(`Could not delete cloud image file ${fileObj.id}:`, delErr);
+                            }
+                            cloudImageFilesMap.delete(delId);
+                        }
+                        localImageUploadTracker.delete(delId);
+                    }
+
+                    databaseArray = databaseArray.filter(r => {
+                        if (!isImageRecord(r)) return true;
+                        if (deletedImagesMap.has(r.id)) {
+                            const delTS = deletedImagesMap.get(r.id) || 0;
+                            if ((r.updatedAt || 0) <= delTS) return false;
+                        }
+                        return true;
+                    });
+                }
+
+                let remoteNonImageRecords = [];
+                if (mainBackupFileId) {
+                    setSyncStatus("Downloading Cloud Data...", "active");
+                    const downloadResp = await fetch(`https://www.googleapis.com/drive/v3/files/${mainBackupFileId}?alt=media`, {
+                        headers: { 'Authorization': `Bearer ${accessToken}` }
+                    });
+                    if (!downloadResp.ok) throw new Error(`Main backup download error: ${downloadResp.status}`);
+                    const blob = await downloadResp.blob();
+                    const jsonText = await decompressBlob(blob);
+                    const remotePayload = JSON.parse(jsonText);
+                    remoteNonImageRecords = remotePayload.records || [];
+                }
+
+                const currentLiveArray = databaseArray;
+                const localNonImageRecords = currentLiveArray.filter(r => !isImageRecord(r));
+
+                const cloudNonImageMap = new Map();
+                remoteNonImageRecords.forEach(item => cloudNonImageMap.set(item.id, item));
+
+                const localNonImageMap = new Map();
+                localNonImageRecords.forEach(item => localNonImageMap.set(item.id, item));
+
+                const allNonImageIds = new Set([...cloudNonImageMap.keys(), ...localNonImageMap.keys()]);
+                const finalMergedNonImageRecords = [];
+                let localNonImageHasNewerEdits = false;
+
+                if (!mainBackupFileId && localNonImageRecords.length > 0) {
+                    localNonImageHasNewerEdits = true;
+                }
+
+                for (const id of allNonImageIds) {
+                    const localItem = localNonImageMap.get(id);
+                    const cloudItem = cloudNonImageMap.get(id);
+                    if (!cloudItem) {
+                        finalMergedNonImageRecords.push(localItem);
+                        localNonImageHasNewerEdits = true;
+                    } else if (!localItem) {
+                        finalMergedNonImageRecords.push(cloudItem);
+                    } else {
+                        const merged = mergeRecords(localItem, cloudItem);
+                        finalMergedNonImageRecords.push(merged);
+                        if (isLocalNewerInMerge(localItem, cloudItem)) {
+                            localNonImageHasNewerEdits = true;
+                        }
+                    }
+                }
+
+                const localImageRecords = currentLiveArray.filter(r => isImageRecord(r) && !deletedImagesMap.has(r.id));
+                const localImageMap = new Map();
+                localImageRecords.forEach(r => localImageMap.set(r.id, r));
+
+                const allImageIds = new Set([...cloudImageFilesMap.keys(), ...localImageMap.keys()]);
+                const finalMergedImageRecords = [];
+                const imagesToUpload = [];
+
+                for (const imgId of allImageIds) {
+                    if (deletedImagesMap.has(imgId)) continue;
+                    const cloudFileInfo = cloudImageFilesMap.get(imgId);
+                    const localImg = localImageMap.get(imgId);
+
+                    if (!cloudFileInfo) {
+                        if (localImg) {
+                            finalMergedImageRecords.push(localImg);
+                            imagesToUpload.push(localImg);
+                        }
+                    } else if (!localImg) {
+                        const imgDownloadResp = await fetch(`https://www.googleapis.com/drive/v3/files/${cloudFileInfo.id}?alt=media`, {
+                            headers: { 'Authorization': `Bearer ${accessToken}` }
+                        });
+                        if (imgDownloadResp.ok) {
+                            const blob = await imgDownloadResp.blob();
+                            const jsonText = await decompressBlob(blob);
+                            const parsed = JSON.parse(jsonText);
+                            const remoteRecord = parsed.record || parsed;
+                            if (!deletedImagesMap.has(remoteRecord.id)) {
+                                finalMergedImageRecords.push(remoteRecord);
+                                localImageUploadTracker.set(imgId, remoteRecord.updatedAt || Date.now());
+                            }
+                        }
+                    } else {
+                        const cloudModTime = cloudFileInfo.modifiedTime ? new Date(cloudFileInfo.modifiedTime).getTime() : 0;
+                        const lastUploadedTime = localImageUploadTracker.get(imgId) || 0;
+
+                        if (cloudModTime > (localImg.updatedAt || 0) + 1000 && cloudModTime > lastUploadedTime + 1000) {
+                            const imgDownloadResp = await fetch(`https://www.googleapis.com/drive/v3/files/${cloudFileInfo.id}?alt=media`, {
+                                headers: { 'Authorization': `Bearer ${accessToken}` }
+                            });
+                            if (imgDownloadResp.ok) {
+                                const blob = await imgDownloadResp.blob();
+                                const jsonText = await decompressBlob(blob);
+                                const parsed = JSON.parse(jsonText);
+                                const remoteRecord = parsed.record || parsed;
+                                if (!deletedImagesMap.has(remoteRecord.id)) {
+                                    const merged = mergeRecords(localImg, remoteRecord);
+                                    finalMergedImageRecords.push(merged);
+                                    if (isLocalNewerInMerge(localImg, remoteRecord)) {
+                                        imagesToUpload.push(merged);
+                                    } else {
+                                        localImageUploadTracker.set(imgId, merged.updatedAt || Date.now());
+                                    }
+                                }
+                            } else {
+                                finalMergedImageRecords.push(localImg);
+                            }
+                        } else {
+                            finalMergedImageRecords.push(localImg);
+                            if ((localImg.updatedAt || 0) > lastUploadedTime) {
+                                imagesToUpload.push(localImg);
+                            }
+                        }
+                    }
+                }
+
+                const filteredMergedImages = finalMergedImageRecords.filter(r => !deletedImagesMap.has(r.id));
+                const finalMergedAllRecords = [...finalMergedNonImageRecords, ...filteredMergedImages];
+                await updateDataState(finalMergedAllRecords, true);
+
+                let success = true;
+
+                if (localNonImageHasNewerEdits) {
+                    setSyncStatus("Saving non-image data...", "active");
+                    const res = await uploadNonImageData(finalMergedNonImageRecords);
+                    if (!res) success = false;
+                }
+
+                if (imagesToUpload.length > 0) {
+                    for (let i = 0; i < imagesToUpload.length; i++) {
+                        const imgRec = imagesToUpload[i];
+                        if (deletedImagesMap.has(imgRec.id)) continue;
+                        setSyncStatus(`Saving image (${i + 1}/${imagesToUpload.length})...`, "active");
+                        const res = await uploadSingleImageRecord(imgRec);
+                        if (!res) {
+                            success = false;
+                        } else {
+                            localImageUploadTracker.set(imgRec.id, imgRec.updatedAt || Date.now());
+                        }
+                    }
+                }
+
+                if (deletedImagesMap.size > 0 || deletedImagesFileId) {
+                    const delRes = await uploadDeletedImagesData();
+                    if (!delRes) success = false;
+                }
+
+                if (success) {
+                    lastSyncedTimestamp = Date.now();
+                    updateSyncStatusDisplay();
+                    startRelativeSyncTimer();
+                }
+
+                return success;
+            } catch (err) {
+                console.error("Sync pull execution exception:", err);
+                const msg = !navigator.onLine ? "Sync paused - Offline\nTap to reconnect" : "Sync Paused ⚠️";
+                setSyncStatus(msg, "error");
+                if (err.status === 401) {
+                    localStorage.setItem(LS_KEY_TOKEN_EXPIRY, '0');
+                    evaluateRoutingSession();
+                }
+                return false;
+            }
+        }
+
+        async function uploadNonImageData(records) {
+            if (localStorage.getItem(LS_KEY_HAS_LINKED) !== 'true' || !accessToken) return false;
+            try {
+                if (!mainBackupFileId) {
+                    const listResp = await gapi.client.drive.files.list({
+                        q: `name = '${MAIN_BACKUP_FILENAME}' and trashed = false`,
+                        spaces: 'appDataFolder',
+                        fields: 'files(id)'
+                    });
+                    if (listResp.result.files && listResp.result.files.length > 0) {
+                        mainBackupFileId = listResp.result.files[0].id;
+                    } else {
+                        const createResp = await gapi.client.drive.files.create({
+                            resource: {
+                                name: MAIN_BACKUP_FILENAME,
+                                parents: ['appDataFolder'],
+                                mimeType: 'application/octet-stream'
+                            },
+                            fields: 'id'
+                        });
+                        mainBackupFileId = createResp.result.id;
+                    }
+                }
+
+                const payload = { records: records };
+                const jsonText = JSON.stringify(payload);
+                const compressedBlob = await compressString(jsonText);
+
+                const uploadResp = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${mainBackupFileId}?uploadType=media`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/octet-stream'
+                    },
+                    body: compressedBlob
+                });
+
+                if (!uploadResp.ok) throw new Error(`Upload non-image data failed: ${uploadResp.status}`);
+                return true;
+            } catch (err) {
+                console.error("uploadNonImageData failed:", err);
+                return false;
+            }
+        }
+
+        async function uploadDeletedImagesData() {
+            if (localStorage.getItem(LS_KEY_HAS_LINKED) !== 'true' || !accessToken) return false;
+            if (deletedImagesMap.size === 0 && !deletedImagesFileId) return true;
+
+            try {
+                if (!deletedImagesFileId) {
+                    const listResp = await gapi.client.drive.files.list({
+                        q: `name = '${DELETED_IMAGES_FILENAME}' and trashed = false`,
+                        spaces: 'appDataFolder',
+                        fields: 'files(id)'
+                    });
+                    if (listResp.result.files && listResp.result.files.length > 0) {
+                        deletedImagesFileId = listResp.result.files[0].id;
+                    } else {
+                        const createResp = await gapi.client.drive.files.create({
+                            resource: {
+                                name: DELETED_IMAGES_FILENAME,
+                                parents: ['appDataFolder'],
+                                mimeType: 'application/octet-stream'
+                            },
+                            fields: 'id'
+                        });
+                        deletedImagesFileId = createResp.result.id;
+                    }
+                }
+
+                const payload = {
+                    deletedImages: Array.from(deletedImagesMap.entries()).map(([id, deletedAt]) => ({
+                        id: id,
+                        deletedAt: deletedAt
+                    }))
+                };
+                const jsonText = JSON.stringify(payload);
+                const compressedBlob = await compressString(jsonText);
+
+                const uploadResp = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${deletedImagesFileId}?uploadType=media`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/octet-stream'
+                    },
+                    body: compressedBlob
+                });
+
+                if (!uploadResp.ok) throw new Error(`Upload deleted images data failed: ${uploadResp.status}`);
+                return true;
+            } catch (err) {
+                console.error("uploadDeletedImagesData failed:", err);
+                return false;
+            }
+        }
+
+        async function uploadSingleImageRecord(imageRecord) {
+            if (localStorage.getItem(LS_KEY_HAS_LINKED) !== 'true' || !accessToken) return false;
+            if (deletedImagesMap.has(imageRecord.id)) return true;
+            try {
+                const fileName = getImageFilename(imageRecord.id);
+                let fileId = null;
+
+                if (cloudImageFilesMap.has(imageRecord.id)) {
+                    fileId = cloudImageFilesMap.get(imageRecord.id).id;
+                } else {
+                    const listResp = await gapi.client.drive.files.list({
+                        q: `name = '${fileName}' and trashed = false`,
+                        spaces: 'appDataFolder',
+                        fields: 'files(id)'
+                    });
+                    if (listResp.result.files && listResp.result.files.length > 0) {
+                        fileId = listResp.result.files[0].id;
+                    } else {
+                        const createResp = await gapi.client.drive.files.create({
+                            resource: {
+                                name: fileName,
+                                parents: ['appDataFolder'],
+                                mimeType: 'application/octet-stream'
+                            },
+                            fields: 'id'
+                        });
+                        fileId = createResp.result.id;
+                    }
+                    cloudImageFilesMap.set(imageRecord.id, { id: fileId, name: fileName });
+                }
+
+                const payload = { record: imageRecord };
+                const jsonText = JSON.stringify(payload);
+                const compressedBlob = await compressString(jsonText);
+
+                const uploadResp = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/octet-stream'
+                    },
+                    body: compressedBlob
+                });
+
+                if (!uploadResp.ok) throw new Error(`Upload image ${imageRecord.id} failed: ${uploadResp.status}`);
+                return true;
+            } catch (err) {
+                console.error(`uploadSingleImageRecord (${imageRecord.id}) failed:`, err);
+                return false;
+            }
+        }
+
+        function scheduleCloudSync(immediate = false) {
+            if (localStorage.getItem(LS_KEY_HAS_LINKED) !== 'true' || !accessToken) return;
+
+            hasUnsavedChanges = true;
+            setSyncStatus("Syncing...", "active");
+
+            if (syncDebounceTimeout) {
+                clearTimeout(syncDebounceTimeout);
+                syncDebounceTimeout = null;
+            }
+
+            if (immediate) {
+                triggerSyncNow();
+            } else {
+                syncDebounceTimeout = setTimeout(triggerSyncNow, 800);
+            }
+        }
+
+        async function triggerSyncNow() {
+            if (syncDebounceTimeout) {
+                clearTimeout(syncDebounceTimeout);
+                syncDebounceTimeout = null;
+            }
+
+            if (isSyncingInProgress) {
+                hasPendingSyncRequest = true;
+                return;
+            }
+
+            isSyncingInProgress = true;
+            hasPendingSyncRequest = false;
+
+            try {
+                const success = await pullAndMergeCloudData();
+                if (success) hasUnsavedChanges = false;
+            } catch (err) {
+                console.error("Sync execution error during triggerSyncNow:", err);
+            } finally {
+                isSyncingInProgress = false;
+                if (hasPendingSyncRequest) {
+                    triggerSyncNow();
+                }
+            }
+        }
+
+        // =========================================================================
+        // SECTION 3: SETTINGS DATA STATE MANAGEMENT
+        // =========================================================================
+        const SETTINGS_RECORD_ID = 'settings_general';
+        const ALL_TOOLKIT_ITEMS = [
+            'Vendor Selection', 'Venue Comparison', 'Wedding Budget', 'Food & Drinks', 'Photo & Shot List',
+            'Guest List', 'Seating Arrangement', 'Wedding Party',
+            'Checklist', 'Itinerary', 'Moodboard', 'Music', 'Packing List',
+            'Honeymoon', 'Gifts & Thanks'
+        ];
+
+        function formatDateForInput(dateStr) {
+            if (!dateStr || typeof dateStr !== 'string') return '';
+            const parsed = parseCustomDate(dateStr);
+            if (!parsed) return dateStr;
+            return formatDisplayDate(parsed);
+        }
+
+        function getDefaultSettingsRecord() {
+            return {
+                id: SETTINGS_RECORD_ID,
+                table: 'settings',
+                updatedAt: 0,
+                deleted: false,
+                data: {
+                    weddingType: 'bg',
+                    partner1Name: 'Arabella',
+                    partner2Name: 'Julian',
+                    weddingDate: 'Sep 24, 2025',
+                    currency: '$',
+                    activeToolkits: [...ALL_TOOLKIT_ITEMS]
+                },
+                updatedKeys: {
+                    weddingType: 0,
+                    partner1Name: 0,
+                    partner2Name: 0,
+                    weddingDate: 0,
+                    currency: 0,
+                    activeToolkits: 0
+                }
+            };
+        }
+
+        function getSettings() {
+            const rec = databaseArray.find(r => r.id === SETTINGS_RECORD_ID && !r.deleted);
+            if (rec && rec.data) {
+                return {
+                    weddingType: rec.data.weddingType || 'bg',
+                    partner1Name: rec.data.partner1Name !== undefined ? rec.data.partner1Name : 'Arabella',
+                    partner2Name: rec.data.partner2Name !== undefined ? rec.data.partner2Name : 'Julian',
+                    weddingDate: rec.data.weddingDate || 'Sep 24, 2025',
+                    currency: rec.data.currency || '$',
+                    activeToolkits: Array.isArray(rec.data.activeToolkits) ? rec.data.activeToolkits : [...ALL_TOOLKIT_ITEMS]
+                };
+            }
+            return getDefaultSettingsRecord().data;
+        }
+
+        async function updateDataState(newData, saveLocal = true) {
+            databaseArray = newData;
+            if (saveLocal) {
+                await saveLocalData(databaseArray);
+            }
+            render();
+        }
+
+        async function handleFieldChange(fieldKey, value) {
+            const now = Date.now();
+            let found = false;
+
+            databaseArray = databaseArray.map(record => {
+                if (record.id === SETTINGS_RECORD_ID) {
+                    found = true;
+                    return {
+                        ...record,
+                        deleted: false,
+                        updatedAt: now,
+                        data: { ...record.data, [fieldKey]: value },
+                        updatedKeys: { ...(record.updatedKeys || {}), [fieldKey]: now }
+                    };
+                }
+                return record;
+            });
+
+            if (!found) {
+                const defaultRec = getDefaultSettingsRecord();
+                defaultRec.updatedAt = now;
+                defaultRec.data[fieldKey] = value;
+                defaultRec.updatedKeys[fieldKey] = now;
+                databaseArray = [...databaseArray, defaultRec];
+            }
+
+            await saveLocalData(databaseArray);
+            scheduleCloudSync();
+
+            if (fieldKey === 'weddingDate') {
+                updateDaysToGoCountdown(value);
+            }
+        }
+
+        function render() {
+            const scrollPos = window.scrollY;
+            const settings = getSettings();
+
+            const weddingTypeEl = document.getElementById('wedding-type');
+            if (weddingTypeEl && weddingTypeEl.value !== settings.weddingType) {
+                weddingTypeEl.value = settings.weddingType;
+                const event = new Event('change');
+                weddingTypeEl.dispatchEvent(event);
+            }
+
+            const p1El = document.getElementById('partner-1-input');
+            if (p1El) p1El.value = settings.partner1Name;
+
+            const p2El = document.getElementById('partner-2-input');
+            if (p2El) p2El.value = settings.partner2Name;
+
+            const dateEl = document.getElementById('wedding-date-input');
+            if (dateEl) dateEl.value = formatDateForInput(settings.weddingDate);
+
+            const currEl = document.getElementById('currency-input');
+            if (currEl) currEl.value = settings.currency;
+
+            updateDaysToGoCountdown(settings.weddingDate);
+
+            const activeList = settings.activeToolkits || [];
+            document.querySelectorAll('.toolkit-card').forEach(card => {
+                const cardId = card.getAttribute('data-id');
+                if (activeList.includes(cardId)) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
+
+            updateNavigationVisibility();
+
+            const hasLinked = localStorage.getItem(LS_KEY_HAS_LINKED) === 'true';
+            updateAuthUI(hasLinked);
+
+            window.scrollTo(0, scrollPos);
+        }
+
+        // =========================================================================
+        // SECTION 4: EXPORT, IMPORT & CLEAR DATA
+        // =========================================================================
+        function exportData() {
+            const activeRecords = databaseArray.filter(r => !r.deleted);
+            if (!activeRecords.length) return alert("No active data to export.");
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeRecords, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", EXPORT_FILENAME);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function triggerImport() {
+            if (confirm("Your current data will be updated with the imported backup file. Do you wish to continue?")) {
+                document.getElementById('importFile').click();
+            }
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (Array.isArray(parsed)) {
+                        const now = Date.now();
+                        const updatedParsed = parsed.map(item => {
+                            if (isImageRecord(item) && deletedImagesMap.has(item.id)) {
+                                deletedImagesMap.delete(item.id);
+                            }
+                            return {
+                                ...item,
+                                updatedAt: now,
+                                updatedKeys: Object.keys(item.data || {}).reduce((acc, k) => {
+                                    acc[k] = now;
+                                    return acc;
+                                }, {})
+                            };
+                        });
+                        saveLocalDeletedImages();
+                        await updateDataState(updatedParsed, true);
+                        scheduleCloudSync();
+
+                        alert("Data has been successfully imported! ✅");
+                    } else {
+                        alert("Import failed: JSON structure is invalid.");
+                    }
+                } catch (err) {
+                    alert("Invalid JSON file.");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        async function clearAllData() {
+            if (confirm("Are you sure you want to clear all data? This will reset all settings to defaults and sync deletions.")) {
+                const now = Date.now();
+                deletedImagesMap.clear();
+                saveLocalDeletedImages();
+
+                databaseArray = databaseArray.map(r => ({
+                    ...r,
+                    deleted: true,
+                    updatedAt: now,
+                    updatedKeys: { ...(r.updatedKeys || {}), deleted: now }
+                }));
+
+                const freshSettings = getDefaultSettingsRecord();
+                freshSettings.updatedAt = now;
+                databaseArray.push(freshSettings);
+
+                localImageUploadTracker.clear();
+                await saveLocalData(databaseArray);
+                render();
+                scheduleCloudSync(true);
+                alert("All settings reset to default values.");
+            }
+        }
+
+        // =========================================================================
+        // SECTION 5: MICRO-INTERACTION SYNC ENGINE & BOOTSTRAP
+        // =========================================================================
+        let lastInteractionSyncTime = Date.now();
+        const SYNC_COOLDOWN_MS = 300000;
+
+        function handleMicroInteraction() {
+            if (localStorage.getItem(LS_KEY_HAS_LINKED) !== 'true' || !accessToken) return;
+            if (isRefreshingToken || needsManualReconnect) return;
+
+            const expiry = parseInt(localStorage.getItem(LS_KEY_TOKEN_EXPIRY) || '0');
+            if (Date.now() >= expiry) {
+                evaluateRoutingSession();
+                return;
+            }
+
+            const now = Date.now();
+            if (now - lastInteractionSyncTime > SYNC_COOLDOWN_MS) {
+                lastInteractionSyncTime = now;
+                if (!isSyncingInProgress && !syncDebounceTimeout) {
+                    setSyncStatus("Checking...", "active");
+                    triggerSyncNow();
+                }
+            }
+        }
+
+        window.addEventListener('mousemove', handleMicroInteraction);
+        window.addEventListener('keydown', handleMicroInteraction);
+        window.addEventListener('touchstart', handleMicroInteraction, { passive: true });
+        window.addEventListener('focus', handleMicroInteraction);
+
+        window.addEventListener('beforeunload', (e) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = 'You have unsaved changes syncing to the cloud. Are you sure you want to leave?';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            loadLocalDeletedImages();
+
+            if (localStorage.getItem(LS_KEY_HAS_LINKED) === 'true') {
+                const authBtnSetup = document.getElementById('authBtnSetupCard');
+                if (authBtnSetup) {
+                    authBtnSetup.innerHTML = '<span class="material-symbols-outlined text-base">cloud_sync</span> Syncing...';
+                    authBtnSetup.disabled = true;
+                }
+                setSyncStatus("Connecting to Drive...", "active");
+            }
+
+            await loadLocalData();
+
+            if (!databaseArray.some(r => r.id === SETTINGS_RECORD_ID)) {
+                databaseArray.push(getDefaultSettingsRecord());
+                await saveLocalData(databaseArray);
+            }
+
+            render();
+        });
+    </script>
+</body></html>
